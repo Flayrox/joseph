@@ -8,9 +8,7 @@ struct josephApp: App {
         MenuBarExtra("joseph", systemImage: state.powerManager.isActive || state.commandPowerManager.isPMSetEnabled ? "bolt.fill" : "bolt.slash") {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
-                    Image(nsImage: logoImage(named: "logo.png"))
-                        .resizable()
-                        .scaledToFit()
+                    JosephOutlineLogo()
                         .frame(width: 24, height: 24)
                     Text("joseph")
                         .font(.headline)
@@ -66,7 +64,12 @@ struct josephApp: App {
         .menuBarExtraStyle(.window)
 
         Window("Lancer un agent", id: "agent-launcher") {
-            AgentLaunchView(supervisor: state.supervisor)
+            VStack(spacing: 12) {
+                JosephFilledLogo()
+                    .frame(width: 72, height: 72)
+                AgentLaunchView(supervisor: state.supervisor)
+            }
+            .padding()
         }
         .defaultSize(width: 420, height: 160)
         .commands {
@@ -82,13 +85,4 @@ struct josephApp: App {
         NSApp.sendAction(#selector(NSWindowController.showWindow(_:)), to: nil, from: nil)
     }
 
-    private func logoImage(named name: String) -> NSImage {
-        if let image = NSImage(named: name) { return image }
-        let image = NSImage(size: NSSize(width: 24, height: 24))
-        image.lockFocus()
-        NSColor.controlAccentColor.setFill()
-        NSBezierPath(ovalIn: NSRect(x: 2, y: 2, width: 20, height: 20)).fill()
-        image.unlockFocus()
-        return image
-    }
 }

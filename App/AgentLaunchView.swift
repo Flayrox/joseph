@@ -7,6 +7,9 @@ struct AgentLaunchView: View {
 
     var body: some View {
         Form {
+            Text("Un agent est un programme local supervisé par joseph.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
             TextField("Chemin absolu de l’exécutable", text: $executablePath)
             TextField("Arguments (séparés par des espaces)", text: $arguments)
             HStack {
