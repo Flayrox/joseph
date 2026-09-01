@@ -3,14 +3,17 @@ import SwiftUI
 
 enum JosephBranding {
     static func image(named name: String) -> NSImage {
-        if let image = NSImage(named: name) { return image }
-        if let image = NSImage(contentsOf: resourceURL(named: name)) { return image }
+        let candidates: [URL?] = [
+            Bundle.main.url(forResource: name, withExtension: nil),
+            Bundle.main.resourceURL?.appendingPathComponent(name),
+            Bundle.main.resourceURL?.appendingPathComponent("Resources").appendingPathComponent(name)
+        ]
+        for candidate in candidates.compactMap({ $0 }) {
+            if let image = NSImage(contentsOf: candidate) {
+                return image
+            }
+        }
         return NSImage(size: NSSize(width: 1, height: 1))
-    }
-
-    static func resourceURL(named name: String) -> URL {
-        Bundle.main.resourceURL?.appendingPathComponent("Resources").appendingPathComponent(name)
-            ?? URL(fileURLWithPath: name)
     }
 }
 
