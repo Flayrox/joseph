@@ -20,8 +20,11 @@ targets:
     sources:
       - path: App
       - path: Core
-      - path: Resources
-        type: folder
+      - path: Resources/logo_fill.jpg
+        buildPhase: resources
+      - path: Resources/logo_outline.png
+        buildPhase: resources
+      - path: Resources/joseph.icns
         buildPhase: resources
     settings:
       base:
