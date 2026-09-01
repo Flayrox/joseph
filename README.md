@@ -24,11 +24,11 @@ Each mode has its own toggle and information icon in the app. They are independe
 
 ### Mode Voyage — assertion native
 
-Uses macOS IOKit power assertions directly. It prevents idle/system sleep while enabled, without changing persistent `pmset` preferences. This is the preferred lightweight mode, but macOS and hardware still control thermal and clamshell safety.
+Prevents the Mac from going to sleep while enabled. It uses native macOS IOKit assertions, does not change persistent `pmset` preferences, and does not launch a process. It is about system sleep, not specifically keeping the display on.
 
 ### pmset — bloquer la veille
 
-Uses administrator-authorized `pmset` commands to change sleep settings while enabled. Before changing anything, joseph snapshots the battery and charger values to:
+Prevents the Mac from sleeping and keeps the display awake by temporarily changing sleep settings with administrator authorization. Before changing anything, joseph snapshots the battery and charger values to:
 
 ```text
 ~/Library/Application Support/joseph/pmset-snapshot.json
@@ -38,11 +38,11 @@ Disabling the toggle restores the exact snapshot. If joseph is interrupted, the 
 
 ### caffeinate — garder l’écran actif
 
-Starts only joseph’s owned `caffeinate -d` process. It prevents display idle sleep while the toggle is enabled. It does not alter persistent system preferences and is stopped when disabled.
+Starts only joseph’s owned `caffeinate -d` process. It prevents the display from turning off while enabled, but the Mac may still go to sleep; the display is simply kept on. It does not alter persistent system preferences and is stopped when disabled.
 
 ### Heartbeat — ping toutes les 15 s
 
-Starts only joseph’s owned `ping -i 15 1.1.1.1` process. It is a basic connectivity heartbeat, not a guarantee that an iPhone hotspot or carrier connection stays awake. It is stopped when disabled.
+Starts only joseph’s owned `ping -i 15 1.1.1.1` process to try to maintain network activity through iPhone USB tethering. The current version does not yet force routing through the iPhone USB interface and does not guarantee that the hotspot or carrier connection stays awake. It is stopped when disabled.
 
 The four controls are independent. Enabling one does not silently enable the others.
 
@@ -75,6 +75,10 @@ xcodebuild test \
 ```
 
 The deployment target is macOS 14 or newer.
+
+## Closed-lid and bag warning
+
+Do not assume that enabling the first three modes makes a closed Mac safe in a bag. `Mode Voyage` prevents system sleep, `caffeinate` keeps the display awake, and `pmset` changes sleep/display settings; together they can keep work running, but a closed Mac may still behave differently depending on hardware and macOS. An active display or sustained workload can generate significant heat. Test on a desk first, monitor temperature, keep ventilation unobstructed, and never rely on joseph as a thermal-safety guarantee.
 
 ## Safety model
 

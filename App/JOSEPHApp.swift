@@ -22,7 +22,7 @@ struct josephApp: App {
                 )) {
                     ModeLabel(
                         title: "Mode Voyage (assertion native)",
-                        explanation: "Tant que ce bouton est activé, joseph demande à macOS de maintenir le système éveillé via l’API native IOKit. Il ne modifie pas les réglages permanents de pmset et ne lance aucun processus. Ce n’est pas la même chose que caffeinate : caffeinate vise ici uniquement l’écran avec -d. Le Mode Voyage concerne la veille du système, mais ne garantit pas le fonctionnement capot fermé sur tous les Mac."
+                        explanation: "Empêche le Mac de se mettre en veille tant que ce bouton est activé. Ce mode utilise l’API native de macOS, ne modifie pas les réglages permanents et ne lance aucun processus. Il concerne la veille du système, pas spécifiquement l’écran."
                     )
                 }
                 Toggle(isOn: Binding(
@@ -31,7 +31,7 @@ struct josephApp: App {
                 )) {
                     ModeLabel(
                         title: "pmset : bloquer la veille",
-                        explanation: "Modifie les réglages de veille batterie/secteur avec autorisation administrateur. joseph sauvegarde les valeurs existantes avant modification et les restaure à la désactivation. Mode puissant : il peut augmenter la consommation et la température."
+                        explanation: "Empêche le Mac de se mettre en veille et garde l’écran allumé en modifiant temporairement les réglages pmset. Les valeurs existantes sont sauvegardées puis restaurées à la désactivation. C’est le mode le plus puissant et il peut augmenter fortement la consommation et la température. Le fonctionnement capot fermé dépend toujours du Mac et de macOS."
                     )
                 }
                 Toggle(isOn: Binding(
@@ -40,7 +40,7 @@ struct josephApp: App {
                 )) {
                     ModeLabel(
                         title: "caffeinate : garder l’écran actif",
-                        explanation: "Lance uniquement le processus caffeinate -d appartenant à joseph pour empêcher l’écran de s’éteindre. Aucun réglage permanent n’est modifié et le processus est arrêté à la désactivation."
+                        explanation: "Empêche l’écran de s’éteindre tant que caffeinate est activé. Le Mac peut malgré tout se mettre en veille ; l’écran reste simplement allumé. Aucun réglage permanent n’est modifié et le processus est arrêté à la désactivation."
                     )
                 }
                 Toggle(isOn: Binding(
@@ -49,7 +49,7 @@ struct josephApp: App {
                 )) {
                     ModeLabel(
                         title: "Heartbeat : ping toutes les 15 s",
-                        explanation: "Lance ping vers 1.1.1.1 toutes les 15 secondes pour maintenir une activité réseau. Cela ne garantit pas que l’iPhone ou l’opérateur conserve le hotspot actif."
+                        explanation: "Essaie de maintenir une activité réseau via le partage USB de l’iPhone en envoyant un ping toutes les 15 secondes. Cette version ne force pas encore le routage vers l’interface iPhone USB et ne garantit pas que le hotspot reste actif."
                     )
                 }
 
