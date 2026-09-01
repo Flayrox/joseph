@@ -20,6 +20,9 @@ targets:
     sources:
       - path: App
       - path: Core
+      - path: Resources
+        type: folder
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.joseph.menubar
