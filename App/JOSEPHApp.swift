@@ -86,6 +86,23 @@ struct josephApp: App {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
+                if let startupStatus = state.startupManager.status {
+                    Text(startupStatus)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Toggle(isOn: Binding(
+                    get: { state.startupManager.launchesAtLogin },
+                    set: { state.startupManager.setLaunchesAtLogin($0) }
+                )) {
+                    ModeLabel(
+                        title: "Ouvrir joseph au démarrage",
+                        explanation: "Ajoute ou retire joseph des apps ouvertes automatiquement à ta connexion macOS. Cela ne lance aucun mode anti-veille et ne démarre aucun heartbeat automatiquement."
+                    )
+                }
+
                 Divider()
                 Button("Lancer un agent…") { openAgentLauncher() }
                 ProcessListView(supervisor: state.supervisor)

@@ -29,6 +29,7 @@ targets:
         INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 JOSEPH contributors"
         GENERATE_INFOPLIST_FILE: true
         INFOPLIST_KEY_LSUIElement: true
+        INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.utilities"
         INFOPLIST_KEY_CFBundleDisplayName: joseph
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"

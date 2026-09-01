@@ -55,6 +55,10 @@ The four controls are independent. Enabling one does not silently enable the oth
 
 Early development. Network routing, thermal telemetry, and remote GUI control are intentionally not enabled yet. They require hardware validation and additional macOS security analysis.
 
+## Launch at login
+
+The menu includes an **Ouvrir joseph au démarrage** toggle backed by macOS `SMAppService`. It only controls whether joseph starts when you log in; it does not automatically enable power modes or heartbeat.
+
 ## Development
 
 The project is generated with [XcodeGen](https://github.com/yonaskolb/XcodeGen):
@@ -75,6 +79,14 @@ xcodebuild test \
 ```
 
 The deployment target is macOS 14 or newer.
+
+Create a local Release DMG with:
+
+```sh
+bash scripts/create-dmg.sh 1.0.0
+```
+
+The generated file is `build/joseph-1.0.0.dmg`. A tagged GitHub release is packaged automatically by `.github/workflows/release.yml`.
 
 ## Closed-lid and bag warning
 

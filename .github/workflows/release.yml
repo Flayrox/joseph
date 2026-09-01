@@ -1,0 +1,31 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: macos-14
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Build and test
+        run: |
+          xcodegen generate
+          xcodebuild test \
+            -project joseph.xcodeproj \
+            -scheme joseph \
+            -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO
+      - name: Package DMG
+        run: bash scripts/create-dmg.sh "${GITHUB_REF_NAME#v}"
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: build/joseph-*.dmg

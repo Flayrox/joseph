@@ -14,3 +14,6 @@ Package.resolved
 
 # JOSEPH runtime logs
 *.log
+
+# Local build artifacts
+build/

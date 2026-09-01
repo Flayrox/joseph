@@ -9,6 +9,7 @@ final class AppState: ObservableObject {
     let networkDiagnostics: NetworkDiagnostics
     let safetyController: PowerSafetyController
     let routeManager: NetworkRouteManager
+    let startupManager: AppStartupManager
 
     init(
         powerManager: PowerAssertionManager? = nil,
@@ -20,6 +21,7 @@ final class AppState: ObservableObject {
         self.powerManager = resolvedPowerManager
         self.safetyController = PowerSafetyController(powerManager: resolvedPowerManager)
         self.routeManager = NetworkRouteManager()
+        self.startupManager = AppStartupManager()
         self.supervisor = supervisor ?? AgentSupervisor(powerManager: resolvedPowerManager)
         let resolvedNetworkDiagnostics = networkDiagnostics ?? NetworkDiagnostics()
         self.networkDiagnostics = resolvedNetworkDiagnostics
