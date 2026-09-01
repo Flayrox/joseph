@@ -1,0 +1,16 @@
+# Xcode / XcodeGen
+*.xcodeproj
+DerivedData/
+.build/
+xcuserdata/
+*.xcuserstate
+
+# macOS
+.DS_Store
+*.swp
+
+# SwiftPM (if ever added)
+Package.resolved
+
+# JOSEPH runtime logs (never commit user logs)
+*.log
