@@ -7,7 +7,12 @@ struct AgentLaunchView: View {
 
     var body: some View {
         Form {
-            Text("Un agent est un programme local supervisé par joseph.")
+            HStack(alignment: .top, spacing: 6) {
+                Text("Agent")
+                    .font(.headline)
+                InfoLabel(text: "Un agent est un programme local lancé et surveillé par joseph. Ce n’est pas une fenêtre : cela peut être un script, un serveur, un outil IA, un build ou un conteneur. Une fenêtre ouverte ne lance rien et n’active aucun mode automatiquement.")
+            }
+            Text("joseph suit le processus lancé, capture ses sorties et maintient le Mac éveillé pendant son exécution.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             TextField("Chemin absolu de l’exécutable", text: $executablePath)

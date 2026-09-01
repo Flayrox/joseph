@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct josephApp: App {
     @StateObject private var state = AppState()
+    @Environment(\.openWindow) private var openWindow
 
     var body: some Scene {
         MenuBarExtra("joseph", systemImage: state.powerManager.isActive || state.commandPowerManager.isPMSetEnabled ? "bolt.fill" : "bolt.slash") {
@@ -15,22 +16,51 @@ struct josephApp: App {
                 }
 
                 Divider()
-                Toggle("Mode Voyage (assertion native)", isOn: Binding(
+                Toggle(isOn: Binding(
                     get: { state.isPowerModeEnabled },
                     set: { state.isPowerModeEnabled = $0 }
-                ))
-                Toggle("pmset : bloquer la veille", isOn: Binding(
+                )) {
+                    ModeLabel(
+                        title: "Mode Voyage (assertion native)",
+                        explanation: "Tant que ce bouton est activé, joseph demande à macOS de maintenir le système éveillé via l’API native IOKit. Il ne modifie pas les réglages permanents de pmset et ne lance aucun processus. Ce n’est pas la même chose que caffeinate : caffeinate vise ici uniquement l’écran avec -d. Le Mode Voyage concerne la veille du système, mais ne garantit pas le fonctionnement capot fermé sur tous les Mac."
+                    )
+                }
+                Toggle(isOn: Binding(
                     get: { state.commandPowerManager.isPMSetEnabled },
                     set: { $0 ? state.commandPowerManager.enablePMSet() : state.commandPowerManager.disablePMSet() }
-                ))
-                Toggle("caffeinate : garder l’écran actif", isOn: Binding(
+                )) {
+                    ModeLabel(
+                        title: "pmset : bloquer la veille",
+                        explanation: "Modifie les réglages de veille batterie/secteur avec autorisation administrateur. joseph sauvegarde les valeurs existantes avant modification et les restaure à la désactivation. Mode puissant : il peut augmenter la consommation et la température."
+                    )
+                }
+                Toggle(isOn: Binding(
                     get: { state.commandPowerManager.isCaffeinateEnabled },
                     set: { $0 ? state.commandPowerManager.enableCaffeinate() : state.commandPowerManager.disableCaffeinate() }
-                ))
-                Toggle("Heartbeat : ping toutes les 15 s", isOn: Binding(
+                )) {
+                    ModeLabel(
+                        title: "caffeinate : garder l’écran actif",
+                        explanation: "Lance uniquement le processus caffeinate -d appartenant à joseph pour empêcher l’écran de s’éteindre. Aucun réglage permanent n’est modifié et le processus est arrêté à la désactivation."
+                    )
+                }
+                Toggle(isOn: Binding(
                     get: { state.commandPowerManager.isHeartbeatEnabled },
                     set: { $0 ? state.commandPowerManager.enableHeartbeat() : state.commandPowerManager.disableHeartbeat() }
-                ))
+                )) {
+                    ModeLabel(
+                        title: "Heartbeat : ping toutes les 15 s",
+                        explanation: "Lance ping vers 1.1.1.1 toutes les 15 secondes pour maintenir une activité réseau. Cela ne garantit pas que l’iPhone ou l’opérateur conserve le hotspot actif."
+                    )
+                }
+
+                SafetySettingsView(controller: state.safetyController)
+
+                if let warning = state.safetyController.warning {
+                    Text(warning)
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("pmset : \(state.commandPowerManager.pmsetStatus)")
@@ -82,7 +112,6 @@ struct josephApp: App {
 
     private func openAgentLauncher() {
         NSApp.activate(ignoringOtherApps: true)
-        NSApp.sendAction(#selector(NSWindowController.showWindow(_:)), to: nil, from: nil)
+        openWindow(id: "agent-launcher")
     }
-
 }

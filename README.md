@@ -20,6 +20,8 @@ No remote AI service is included automatically. joseph only runs the executable 
 
 ## Power modes
 
+Each mode has its own toggle and information icon in the app. They are independent: enabling one does not automatically enable the others.
+
 ### Mode Voyage — assertion native
 
 Uses macOS IOKit power assertions directly. It prevents idle/system sleep while enabled, without changing persistent `pmset` preferences. This is the preferred lightweight mode, but macOS and hardware still control thermal and clamshell safety.

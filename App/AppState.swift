@@ -7,6 +7,7 @@ final class AppState: ObservableObject {
     let powerManager: PowerAssertionManager
     let supervisor: AgentSupervisor
     let networkDiagnostics: NetworkDiagnostics
+    let safetyController: PowerSafetyController
 
     init(
         powerManager: PowerAssertionManager? = nil,
@@ -16,6 +17,7 @@ final class AppState: ObservableObject {
         let resolvedPowerManager = powerManager ?? PowerAssertionManager()
         self.commandPowerManager = CommandPowerManager()
         self.powerManager = resolvedPowerManager
+        self.safetyController = PowerSafetyController(powerManager: resolvedPowerManager)
         self.supervisor = supervisor ?? AgentSupervisor(powerManager: resolvedPowerManager)
         let resolvedNetworkDiagnostics = networkDiagnostics ?? NetworkDiagnostics()
         self.networkDiagnostics = resolvedNetworkDiagnostics
@@ -26,9 +28,13 @@ final class AppState: ObservableObject {
         get { powerManager.isActive }
         set {
             if newValue {
-                _ = powerManager.enableKeepAwake(reason: "JOSEPH: Travel mode")
+                guard safetyController.modeWillEnable() else { return }
+                if powerManager.enableKeepAwake(reason: "joseph: Mode Voyage") {
+                    safetyController.startMonitoring()
+                }
             } else {
                 powerManager.disableKeepAwake()
+                safetyController.stopMonitoring()
             }
         }
     }
