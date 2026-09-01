@@ -10,6 +10,8 @@ Early development. The current foundation provides:
 
 - macOS menu-bar UI;
 - explicit, idempotent IOKit power assertions;
+- independent opt-in toggles for `pmset`, `caffeinate`, and the heartbeat process;
+- exact `pmset` snapshot persistence and restoration when the pmset toggle is disabled;
 - process lifecycle supervision with bounded stdout/stderr capture;
 - read-only network path diagnostics;
 - persistent runtime logging under `~/.joseph/logs/`.
@@ -22,7 +24,7 @@ The project is generated with [XcodeGen](https://github.com/yonaskolb/XcodeGen):
 
 ```sh
 xcodegen generate
-open JOSEPH.xcodeproj
+open joseph.xcodeproj
 ```
 
 Build and test from Xcode or with `xcodebuild` using the generated project. The deployment target is macOS 14 or newer.
@@ -33,6 +35,9 @@ Build and test from Xcode or with `xcodebuild` using the generated project. The 
 - A failed secondary assertion does not hide the primary failure.
 - Process launch failures are reported without changing power state.
 - Automatic network configuration is not performed by default.
+- The pmset toggle is opt-in, requests administrator authorization through macOS, and restores the saved battery/charger values when disabled.
+- The caffeinate and heartbeat toggles do not require administrator privileges and terminate their owned processes when disabled.
+- Keep these controls disabled during thermal or battery-critical testing.
 - JOSEPH does not claim that a power assertion guarantees clamshell operation on every Mac model or macOS release.
 
 ## Roadmap

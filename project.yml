@@ -1,4 +1,4 @@
-name: JOSEPH
+name: joseph
 options:
   bundleIdPrefix: dev.joseph
   createIntermediateGroups: true
@@ -14,7 +14,7 @@ settings:
     CODE_SIGN_STYLE: Automatic
 
 targets:
-  JOSEPH:
+  joseph:
     type: application
     platform: macOS
     sources:
@@ -26,7 +26,7 @@ targets:
         INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 JOSEPH contributors"
         GENERATE_INFOPLIST_FILE: true
         INFOPLIST_KEY_LSUIElement: true
-        INFOPLIST_KEY_CFBundleDisplayName: JOSEPH
+        INFOPLIST_KEY_CFBundleDisplayName: joseph
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"
 
@@ -36,17 +36,17 @@ targets:
     sources:
       - path: Tests
     dependencies:
-      - target: JOSEPH
+      - target: joseph
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.joseph.menubar.tests
         GENERATE_INFOPLIST_FILE: true
 
 schemes:
-  JOSEPH:
+  joseph:
     build:
       targets:
-        JOSEPH: all
+        joseph: all
         JOSEPHTests: [test]
     run:
       config: Debug

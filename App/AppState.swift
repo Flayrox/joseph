@@ -3,6 +3,7 @@ import SwiftUI
 
 @MainActor
 final class AppState: ObservableObject {
+    let commandPowerManager: CommandPowerManager
     let powerManager: PowerAssertionManager
     let supervisor: AgentSupervisor
     let networkDiagnostics: NetworkDiagnostics
@@ -13,6 +14,7 @@ final class AppState: ObservableObject {
         networkDiagnostics: NetworkDiagnostics? = nil
     ) {
         let resolvedPowerManager = powerManager ?? PowerAssertionManager()
+        self.commandPowerManager = CommandPowerManager()
         self.powerManager = resolvedPowerManager
         self.supervisor = supervisor ?? AgentSupervisor(powerManager: resolvedPowerManager)
         let resolvedNetworkDiagnostics = networkDiagnostics ?? NetworkDiagnostics()

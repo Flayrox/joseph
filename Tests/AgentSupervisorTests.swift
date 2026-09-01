@@ -1,5 +1,5 @@
 import XCTest
-@testable import JOSEPH
+@testable import joseph
 
 @MainActor
 final class AgentSupervisorTests: XCTestCase {

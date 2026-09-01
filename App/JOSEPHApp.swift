@@ -5,18 +5,40 @@ struct JOSEPHApp: App {
     @StateObject private var state = AppState()
 
     var body: some Scene {
-        MenuBarExtra("JOSEPH", systemImage: state.powerManager.isActive ? "bolt.fill" : "bolt.slash") {
-            Text("J.O.S.E.P.H.")
+        MenuBarExtra("joseph", systemImage: state.powerManager.isActive || state.commandPowerManager.isPMSetEnabled ? "bolt.fill" : "bolt.slash") {
+            Text("joseph")
                 .font(.headline)
 
             Divider()
 
-            Toggle("Mode Voyage", isOn: Binding(
+            Toggle("Mode Voyage (assertion native)", isOn: Binding(
                 get: { state.isPowerModeEnabled },
                 set: { state.isPowerModeEnabled = $0 }
             ))
 
-            if let error = state.powerManager.lastError ?? state.supervisor.lastError {
+            Toggle("pmset : bloquer la veille", isOn: Binding(
+                get: { state.commandPowerManager.isPMSetEnabled },
+                set: { $0 ? state.commandPowerManager.enablePMSet() : state.commandPowerManager.disablePMSet() }
+            ))
+
+            Toggle("caffeinate : garder l’écran actif", isOn: Binding(
+                get: { state.commandPowerManager.isCaffeinateEnabled },
+                set: { $0 ? state.commandPowerManager.enableCaffeinate() : state.commandPowerManager.disableCaffeinate() }
+            ))
+
+            Toggle("Heartbeat : ping toutes les 15 s", isOn: Binding(
+                get: { state.commandPowerManager.isHeartbeatEnabled },
+                set: { $0 ? state.commandPowerManager.enableHeartbeat() : state.commandPowerManager.disableHeartbeat() }
+            ))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("pmset : \(state.commandPowerManager.pmsetStatus)")
+                Text("caffeinate : \(state.commandPowerManager.caffeinateStatus)")
+                Text("heartbeat : \(state.commandPowerManager.heartbeatStatus)")
+            }
+            .font(.caption)
+
+            if let error = state.commandPowerManager.lastError ?? state.powerManager.lastError ?? state.supervisor.lastError {
                 Text(error)
                     .font(.caption)
                     .foregroundStyle(.red)
@@ -44,6 +66,7 @@ struct JOSEPHApp: App {
 
             Button("Quitter") {
                 state.supervisor.terminateAll()
+                state.commandPowerManager.disableAll()
                 state.powerManager.disableKeepAwake()
                 NSApplication.shared.terminate(nil)
             }
