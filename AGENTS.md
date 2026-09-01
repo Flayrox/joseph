@@ -57,7 +57,7 @@ For non-trivial changes, run these autonomously as part of the task, not as a ch
 4. Check warnings and failures introduced by the change, and fix or clearly log them before moving on.
 5. Update documentation when behavior, permissions, setup, or limitations change.
 
-If macOS/Xcode tooling is unavailable, report that fact in the end-of-task summary instead of claiming verification succeeded. Never state a build or test passed without having actually run it.
+If macOS/Xcode tooling is unavailable, MAKE IT AVAILABLE BY ALL METHODS, report that fact in the end-of-task summary instead of claiming verification succeeded. Never state a build or test passed without having actually run it.
 
 ## Architecture priorities
 
