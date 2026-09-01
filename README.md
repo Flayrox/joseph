@@ -42,7 +42,7 @@ Starts only joseph’s owned `caffeinate -d` process. It prevents the display fr
 
 ### Heartbeat — ping toutes les 15 s
 
-Starts only joseph’s owned `ping -i 15 1.1.1.1` process to try to maintain network activity through iPhone USB tethering. The current version does not yet force routing through the iPhone USB interface and does not guarantee that the hotspot or carrier connection stays awake. It is stopped when disabled.
+Starts only joseph’s owned `ping -i 15 1.1.1.1` process to try to maintain network activity through a user-selected macOS interface. The interface can be automatic, iPhone USB, Ethernet, Thunderbolt, USB-C networking, Wi-Fi, or another interface exposed by macOS. When an interface is selected, joseph passes it to `ping` with `-I`; it does not change the default route or network service order. It does not guarantee that a hotspot or carrier connection stays awake, and it is stopped when disabled.
 
 The four controls are independent. Enabling one does not silently enable the others.
 

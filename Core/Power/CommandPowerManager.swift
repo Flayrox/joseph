@@ -183,6 +183,7 @@ final class CommandPowerManager: ObservableObject {
     private var originalSettings: PMSetPowerSettings?
     private var caffeinateProcess: Process?
     private var heartbeatProcess: Process?
+    private var heartbeatInterfaceName: String?
 
     init(runner: CommandRunning = FoundationCommandRunner(), snapshotURL: URL? = nil) {
         self.runner = runner
@@ -295,12 +296,17 @@ final class CommandPowerManager: ObservableObject {
 
     // MARK: - Heartbeat
 
-    func enableHeartbeat() {
+    func enableHeartbeat(interfaceName: String? = nil) {
         guard !isHeartbeatEnabled else { return }
         do {
+            var arguments = ["-i", "15"]
+            if let interfaceName, !interfaceName.isEmpty {
+                arguments += ["-I", interfaceName]
+            }
+            arguments.append("1.1.1.1")
             let process = try runner.start(
                 path: Self.pingPath,
-                arguments: ["-i", "15", "1.1.1.1"],
+                arguments: arguments,
                 redirectsOutput: true
             )
             process.terminationHandler = { [weak self] _ in
@@ -312,6 +318,7 @@ final class CommandPowerManager: ObservableObject {
                 }
             }
             heartbeatProcess = process
+            heartbeatInterfaceName = interfaceName
             isHeartbeatEnabled = true
             heartbeatStatus = "Enabled"
             lastError = nil
@@ -327,6 +334,7 @@ final class CommandPowerManager: ObservableObject {
     func disableHeartbeat() {
         stop(process: heartbeatProcess)
         heartbeatProcess = nil
+        heartbeatInterfaceName = nil
         isHeartbeatEnabled = false
         heartbeatStatus = "Disabled"
         josephLog("INFO", "heartbeat ping disabled")

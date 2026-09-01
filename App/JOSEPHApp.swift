@@ -45,14 +45,15 @@ struct josephApp: App {
                 }
                 Toggle(isOn: Binding(
                     get: { state.commandPowerManager.isHeartbeatEnabled },
-                    set: { $0 ? state.commandPowerManager.enableHeartbeat() : state.commandPowerManager.disableHeartbeat() }
+                    set: { $0 ? state.enableHeartbeat() : state.commandPowerManager.disableHeartbeat() }
                 )) {
                     ModeLabel(
                         title: "Heartbeat : ping toutes les 15 s",
-                        explanation: "Essaie de maintenir une activité réseau via le partage USB de l’iPhone en envoyant un ping toutes les 15 secondes. Cette version ne force pas encore le routage vers l’interface iPhone USB et ne garantit pas que le hotspot reste actif."
+                        explanation: "Essaie de maintenir la connexion sur l’interface choisie en envoyant un ping toutes les 15 secondes. Choisis iPhone USB, Ethernet, Thunderbolt, USB-C ou Wi-Fi ci-dessous. Le heartbeat ne change pas la route par défaut et ne garantit pas qu’un hotspot reste actif."
                     )
                 }
 
+                NetworkInterfacePicker(diagnostics: state.networkDiagnostics)
                 SafetySettingsView(controller: state.safetyController)
 
                 if let warning = state.safetyController.warning {

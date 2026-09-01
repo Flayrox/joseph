@@ -24,6 +24,10 @@ final class AppState: ObservableObject {
         resolvedNetworkDiagnostics.start()
     }
 
+    func enableHeartbeat() {
+        commandPowerManager.enableHeartbeat(interfaceName: networkDiagnostics.selectedInterfaceName)
+    }
+
     var isPowerModeEnabled: Bool {
         get { powerManager.isActive }
         set {
