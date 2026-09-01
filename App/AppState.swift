@@ -8,6 +8,7 @@ final class AppState: ObservableObject {
     let supervisor: AgentSupervisor
     let networkDiagnostics: NetworkDiagnostics
     let safetyController: PowerSafetyController
+    let routeManager: NetworkRouteManager
 
     init(
         powerManager: PowerAssertionManager? = nil,
@@ -18,6 +19,7 @@ final class AppState: ObservableObject {
         self.commandPowerManager = CommandPowerManager()
         self.powerManager = resolvedPowerManager
         self.safetyController = PowerSafetyController(powerManager: resolvedPowerManager)
+        self.routeManager = NetworkRouteManager()
         self.supervisor = supervisor ?? AgentSupervisor(powerManager: resolvedPowerManager)
         let resolvedNetworkDiagnostics = networkDiagnostics ?? NetworkDiagnostics()
         self.networkDiagnostics = resolvedNetworkDiagnostics
@@ -25,7 +27,11 @@ final class AppState: ObservableObject {
     }
 
     func enableHeartbeat() {
-        commandPowerManager.enableHeartbeat(interfaceName: networkDiagnostics.selectedInterfaceName)
+        let interfaceName = networkDiagnostics.selectedInterfaceName
+        if let interfaceName {
+            guard routeManager.enable(preferredInterface: interfaceName) else { return }
+        }
+        commandPowerManager.enableHeartbeat(interfaceName: interfaceName)
     }
 
     var isPowerModeEnabled: Bool {

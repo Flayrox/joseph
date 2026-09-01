@@ -45,15 +45,23 @@ struct josephApp: App {
                 }
                 Toggle(isOn: Binding(
                     get: { state.commandPowerManager.isHeartbeatEnabled },
-                    set: { $0 ? state.enableHeartbeat() : state.commandPowerManager.disableHeartbeat() }
+                    set: { enabled in
+                        if enabled {
+                            state.enableHeartbeat()
+                        } else {
+                            state.commandPowerManager.disableHeartbeat()
+                            state.routeManager.disable()
+                        }
+                    }
                 )) {
                     ModeLabel(
                         title: "Heartbeat : ping toutes les 15 s",
-                        explanation: "Essaie de maintenir la connexion sur l’interface choisie en envoyant un ping toutes les 15 secondes. Choisis iPhone USB, Ethernet, Thunderbolt, USB-C ou Wi-Fi ci-dessous. Le heartbeat ne change pas la route par défaut et ne garantit pas qu’un hotspot reste actif."
+                        explanation: "Essaie de maintenir la connexion sur l’interface choisie en envoyant un ping toutes les 15 secondes. Si une interface précise est choisie, joseph place temporairement son service réseau en première position et restaure l’ordre original à l’arrêt. Cela nécessite une autorisation administrateur et ne garantit pas qu’un hotspot reste actif."
                     )
                 }
 
                 NetworkInterfacePicker(diagnostics: state.networkDiagnostics)
+                NetworkRouteView(routeManager: state.routeManager, diagnostics: state.networkDiagnostics)
                 SafetySettingsView(controller: state.safetyController)
 
                 if let warning = state.safetyController.warning {
@@ -84,6 +92,7 @@ struct josephApp: App {
                 Divider()
                 Button("Quitter") {
                     state.supervisor.terminateAll()
+                    state.routeManager.disable()
                     state.commandPowerManager.disableAll()
                     state.powerManager.disableKeepAwake()
                     NSApplication.shared.terminate(nil)

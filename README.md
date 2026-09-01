@@ -42,7 +42,7 @@ Starts only joseph’s owned `caffeinate -d` process. It prevents the display fr
 
 ### Heartbeat — ping toutes les 15 s
 
-Starts only joseph’s owned `ping -i 15 1.1.1.1` process to try to maintain network activity through a user-selected macOS interface. The interface can be automatic, iPhone USB, Ethernet, Thunderbolt, USB-C networking, Wi-Fi, or another interface exposed by macOS. When an interface is selected, joseph passes it to `ping` with `-I`; it does not change the default route or network service order. It does not guarantee that a hotspot or carrier connection stays awake, and it is stopped when disabled.
+Starts only joseph’s owned `ping -i 15 1.1.1.1` process to try to maintain network activity through a user-selected macOS interface. The interface can be automatic, iPhone USB, Ethernet, Thunderbolt, USB-C networking, Wi-Fi, or another interface exposed by macOS. When an interface is selected, joseph passes it to `ping` with `-I`, temporarily places the matching network service first with `networksetup`, and restores the original service order when the heartbeat is disabled. This requires administrator authorization. The heartbeat does not guarantee that a hotspot or carrier connection stays awake, and it is stopped when disabled.
 
 The four controls are independent. Enabling one does not silently enable the others.
 
@@ -85,7 +85,7 @@ Do not assume that enabling the first three modes makes a closed Mac safe in a b
 - Power assertions are released when disabled and when their owner is destroyed.
 - pmset changes are snapshot-backed and restored on normal deactivation.
 - Process launch failures do not change power state.
-- Automatic network routing is not performed.
+- Route changes are opt-in, temporarily prioritize the selected service, require administrator authorization, and are restored on disable.
 - Caffeinate and heartbeat processes are owned and terminated by joseph.
 - Keep these controls disabled during thermal or battery-critical testing.
 - joseph does not claim that a power assertion guarantees clamshell operation on every Mac model or macOS release.
@@ -94,7 +94,7 @@ Do not assume that enabling the first three modes makes a closed Mac safe in a b
 
 1. Thermal guard with hardware-specific providers and safe fallback.
 2. Process groups, cancellation, and log rotation.
-3. Read-only USB/iPhone interface diagnostics.
+3. More complete per-interface connectivity diagnostics.
 4. Opt-in network policy with rollback.
 5. Signed/notarized release packaging.
 6. Remote GUI research as a separate final phase.

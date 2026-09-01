@@ -6,7 +6,7 @@ struct NetworkInterfacePicker: View {
     var body: some View {
         HStack(spacing: 6) {
             Text("Interface heartbeat")
-            InfoLabel(text: "Sélectionne l’interface réseau à utiliser pour le heartbeat. L’interface doit être reconnue par macOS comme enX, bridgeX ou une autre interface compatible avec ping. La sélection ne modifie pas l’ordre des services réseau.")
+            InfoLabel(text: "Sélectionne l’interface réseau à utiliser pour le heartbeat. Si tu choisis une interface précise, joseph essaiera aussi de placer temporairement son service réseau en première position. L’ordre original sera restauré quand le heartbeat sera désactivé.")
             Spacer()
             Picker("Interface heartbeat", selection: Binding(
                 get: { diagnostics.selectedInterfaceName ?? "" },
@@ -19,6 +19,8 @@ struct NetworkInterfacePicker: View {
                 }
             }
             .labelsHidden()
+            Text(diagnostics.selectedInterfaceReachability)
+                .foregroundStyle(diagnostics.selectedInterfaceIsReachable ? .green : .secondary)
         }
         .font(.caption)
     }
