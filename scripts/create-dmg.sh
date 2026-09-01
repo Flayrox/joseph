@@ -12,6 +12,7 @@ STAGING_DIR="$BUILD_DIR/dmg-staging"
 
 rm -rf "$STAGING_DIR" "$DMG_PATH"
 mkdir -p "$STAGING_DIR"
+bash "$ROOT_DIR/scripts/create-app-icon.sh"
 xcodegen generate
 xcodebuild archive \
   -project joseph.xcodeproj \
