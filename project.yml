@@ -9,8 +9,6 @@ settings:
   base:
     SWIFT_VERSION: "5.10"
     MACOSX_DEPLOYMENT_TARGET: "14.0"
-    # JOSEPH needs IOKit power assertions, `networksetup`, and child processes.
-    # App Sandbox must stay OFF; hardened runtime is enabled for codesign sanity.
     ENABLE_APP_SANDBOX: false
     ENABLE_HARDENED_RUNTIME: true
     CODE_SIGN_STYLE: Automatic
@@ -22,20 +20,15 @@ targets:
     sources:
       - path: App
       - path: Core
-      - path: Resources
-        type: folder
-        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.joseph.menubar
-        INFOPLIST_GENERATION_CDNUM: true
+        INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 JOSEPH contributors"
         GENERATE_INFOPLIST_FILE: true
         INFOPLIST_KEY_LSUIElement: true
         INFOPLIST_KEY_CFBundleDisplayName: JOSEPH
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"
-        # Folder references are copied verbatim; keep Scripts executable.
-        COPY_PHASE_STRIP: false
 
   JOSEPHTests:
     type: bundle.unit-test

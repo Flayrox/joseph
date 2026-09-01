@@ -9,8 +9,8 @@ xcuserdata/
 .DS_Store
 *.swp
 
-# SwiftPM (if ever added)
+# SwiftPM
 Package.resolved
 
-# JOSEPH runtime logs (never commit user logs)
+# JOSEPH runtime logs
 *.log

@@ -10,7 +10,8 @@ Early development. The current foundation provides:
 
 - macOS menu-bar UI;
 - explicit, idempotent IOKit power assertions;
-- process lifecycle supervision;
+- process lifecycle supervision with bounded stdout/stderr capture;
+- read-only network path diagnostics;
 - persistent runtime logging under `~/.joseph/logs/`.
 
 Network routing, thermal telemetry, and remote GUI control are intentionally not enabled yet. They require hardware validation and additional macOS security analysis.
@@ -37,8 +38,8 @@ Build and test from Xcode or with `xcodebuild` using the generated project. The 
 ## Roadmap
 
 1. Testable power assertion state machine and UI polish.
-2. Process groups, stdout/stderr streaming, cancellation, and log rotation.
-3. Read-only network interface and default-route diagnostics.
+2. Process groups, cancellation, bounded output, and log rotation.
+3. Read-only network interface and path diagnostics.
 4. Opt-in network policy with rollback.
 5. Hardware-specific thermal safety providers.
 6. Remote GUI research as a separate final phase.

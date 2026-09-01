@@ -35,7 +35,9 @@ struct JOSEPHApp: App {
                 .disabled(state.supervisor.processes.isEmpty)
             }
 
-            Text("Processus actifs : \(state.supervisor.processes.count)")
+            Text("Processus actifs : \(state.supervisor.processes.filter { $0.status == .running }.count)")
+                .font(.caption)
+            Text("Réseau : \(state.networkDiagnostics.pathStatus)")
                 .font(.caption)
 
             Divider()

@@ -5,13 +5,19 @@ import SwiftUI
 final class AppState: ObservableObject {
     let powerManager: PowerAssertionManager
     let supervisor: AgentSupervisor
+    let networkDiagnostics: NetworkDiagnostics
 
     init(
-        powerManager: PowerAssertionManager = PowerAssertionManager(),
-        supervisor: AgentSupervisor = AgentSupervisor()
+        powerManager: PowerAssertionManager? = nil,
+        supervisor: AgentSupervisor? = nil,
+        networkDiagnostics: NetworkDiagnostics? = nil
     ) {
-        self.powerManager = powerManager
-        self.supervisor = supervisor
+        let resolvedPowerManager = powerManager ?? PowerAssertionManager()
+        self.powerManager = resolvedPowerManager
+        self.supervisor = supervisor ?? AgentSupervisor(powerManager: resolvedPowerManager)
+        let resolvedNetworkDiagnostics = networkDiagnostics ?? NetworkDiagnostics()
+        self.networkDiagnostics = resolvedNetworkDiagnostics
+        resolvedNetworkDiagnostics.start()
     }
 
     var isPowerModeEnabled: Bool {

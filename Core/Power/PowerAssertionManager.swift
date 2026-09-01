@@ -8,7 +8,7 @@ protocol PowerAssertionProviding {
 
 struct IOKitPowerAssertionProvider: PowerAssertionProviding {
     func create(type: CFString, reason: CFString) -> (IOReturn, IOPMAssertionID) {
-        var identifier = kIOPMNullAssertionID
+        var identifier = IOPMAssertionID(kIOPMNullAssertionID)
         let result = IOPMAssertionCreateWithName(
             type,
             IOPMAssertionLevel(kIOPMAssertionLevelOn),
@@ -29,8 +29,8 @@ final class PowerAssertionManager: ObservableObject {
     @Published private(set) var lastError: String?
 
     private let provider: PowerAssertionProviding
-    private var systemSleepAssertionID = kIOPMNullAssertionID
-    private var idleSleepAssertionID = kIOPMNullAssertionID
+    private var systemSleepAssertionID: IOPMAssertionID = IOPMAssertionID(kIOPMNullAssertionID)
+    private var idleSleepAssertionID: IOPMAssertionID = IOPMAssertionID(kIOPMNullAssertionID)
     private var activeReason: String?
 
     init(provider: PowerAssertionProviding = IOKitPowerAssertionProvider()) {
@@ -73,11 +73,11 @@ final class PowerAssertionManager: ObservableObject {
         guard isActive || systemSleepAssertionID != kIOPMNullAssertionID || idleSleepAssertionID != kIOPMNullAssertionID else { return }
         if systemSleepAssertionID != kIOPMNullAssertionID {
             _ = provider.release(systemSleepAssertionID)
-            systemSleepAssertionID = kIOPMNullAssertionID
+            systemSleepAssertionID = IOPMAssertionID(kIOPMNullAssertionID)
         }
         if idleSleepAssertionID != kIOPMNullAssertionID {
             _ = provider.release(idleSleepAssertionID)
-            idleSleepAssertionID = kIOPMNullAssertionID
+            idleSleepAssertionID = IOPMAssertionID(kIOPMNullAssertionID)
         }
         josephLog("INFO", "Keep-awake disabled (was: \(activeReason ?? "n/a"))")
         activeReason = nil
