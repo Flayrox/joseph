@@ -6,7 +6,7 @@ struct josephApp: App {
     @Environment(\.openWindow) private var openWindow
 
     var body: some Scene {
-        MenuBarExtra("joseph", systemImage: state.powerManager.isActive || state.commandPowerManager.isPMSetEnabled ? "bolt.fill" : "bolt.slash") {
+        MenuBarExtra(content: {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     JosephOutlineLogo()
@@ -117,7 +117,9 @@ struct josephApp: App {
                 .keyboardShortcut("q")
             }
             .padding(12)
-        }
+        }, label: {
+            JosephMenuBarIcon()
+        })
         .menuBarExtraStyle(.window)
 
         Window("Lancer un agent", id: "agent-launcher") {

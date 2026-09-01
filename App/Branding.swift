@@ -15,6 +15,23 @@ enum JosephBranding {
         }
         return NSImage(size: NSSize(width: 1, height: 1))
     }
+
+    static var menuBarImage: NSImage {
+        let image = image(named: "logo_outline.png")
+        image.isTemplate = true
+        return image
+    }
+}
+
+struct JosephMenuBarIcon: View {
+    var body: some View {
+        Image(nsImage: JosephBranding.menuBarImage)
+            .resizable()
+            .renderingMode(.template)
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 18, height: 18)
+            .accessibilityLabel("joseph")
+    }
 }
 
 struct JosephOutlineLogo: View {
