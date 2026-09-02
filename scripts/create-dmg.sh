@@ -47,6 +47,7 @@ if [ -f "$ICNS_PATH" ]; then
   file "$ICNS_PATH"
 fi
 
+codesign --force --deep --sign - "$APP_PATH" 2>/dev/null || true
 cp -R "$APP_PATH" "$STAGING_DIR/"
 ln -s /Applications "$STAGING_DIR/Applications"
 hdiutil create -volname joseph -srcfolder "$STAGING_DIR" -ov -format UDZO "$DMG_PATH"
