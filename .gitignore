@@ -17,3 +17,4 @@ Package.resolved
 
 # Local build artifacts
 build/
+Info.plist
