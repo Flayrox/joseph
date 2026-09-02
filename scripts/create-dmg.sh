@@ -26,11 +26,27 @@ xcodebuild archive \
 rm -rf "$APP_PATH"
 mkdir -p "$(dirname "$APP_PATH")"
 cp -R "$BUILD_DIR/joseph.xcarchive/Products/Applications/joseph.app" "$APP_PATH"
-if [ ! -f "$APP_PATH/Contents/Resources/joseph.icns" ]; then
-  echo "ERROR: generated app has no joseph.icns at bundle resource root" >&2
-  exit 1
+
+ICNS_PATH="$APP_PATH/Contents/Resources/joseph.icns"
+CAR_PATH="$APP_PATH/Contents/Resources/Assets.car"
+PLIST_PATH="$APP_PATH/Contents/Info.plist"
+
+fail() { echo "ERROR: $1" >&2; exit 1; }
+
+[ -f "$CAR_PATH" ] || fail "Assets.car missing (asset catalog was not compiled)"
+ICON_KEYS="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIconName' "$PLIST_PATH" 2>/dev/null || true)
+$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIconFile' "$PLIST_PATH" 2>/dev/null || true)"
+[ "$ICON_KEYS" = "AppIcon
+AppIcon" ] || fail "Info.plist icon keys must both be AppIcon: got [$ICON_KEYS]"
+
+ASSETUTIL="$(xcrun --find assetutil 2>/dev/null || true)"
+if [ -n "$ASSETUTIL" ]; then
+  "$ASSETUTIL" --info "$CAR_PATH" | grep -q '"AppIcon"' || fail "Assets.car does not contain the AppIcon set"
 fi
-file "$APP_PATH/Contents/Resources/joseph.icns"
+if [ -f "$ICNS_PATH" ]; then
+  file "$ICNS_PATH"
+fi
+
 cp -R "$APP_PATH" "$STAGING_DIR/"
 ln -s /Applications "$STAGING_DIR/Applications"
 hdiutil create -volname joseph -srcfolder "$STAGING_DIR" -ov -format UDZO "$DMG_PATH"
