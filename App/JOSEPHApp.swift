@@ -25,6 +25,7 @@ struct josephApp: App {
                         explanation: "Empêche le Mac de se mettre en veille tant que ce bouton est activé. Ce mode utilise l’API native de macOS, ne modifie pas les réglages permanents et ne lance aucun processus. Il concerne la veille du système, pas spécifiquement l’écran."
                     )
                 }
+                .accessibilityIdentifier("toggle-voyage")
                 Toggle(isOn: Binding(
                     get: { state.commandPowerManager.isPMSetEnabled },
                     set: { $0 ? state.commandPowerManager.enablePMSet() : state.commandPowerManager.disablePMSet() }
@@ -34,6 +35,7 @@ struct josephApp: App {
                         explanation: "Empêche le Mac de se mettre en veille et garde l’écran allumé en modifiant temporairement les réglages pmset. Les valeurs existantes sont sauvegardées puis restaurées à la désactivation. C’est le mode le plus puissant et il peut augmenter fortement la consommation et la température. Le fonctionnement capot fermé dépend toujours du Mac et de macOS."
                     )
                 }
+                .accessibilityIdentifier("toggle-pmset")
                 Toggle(isOn: Binding(
                     get: { state.commandPowerManager.isCaffeinateEnabled },
                     set: { $0 ? state.commandPowerManager.enableCaffeinate() : state.commandPowerManager.disableCaffeinate() }
@@ -43,6 +45,7 @@ struct josephApp: App {
                         explanation: "Empêche l’écran de s’éteindre tant que caffeinate est activé. Le Mac peut malgré tout se mettre en veille ; l’écran reste simplement allumé. Aucun réglage permanent n’est modifié et le processus est arrêté à la désactivation."
                     )
                 }
+                .accessibilityIdentifier("toggle-caffeinate")
                 Toggle(isOn: Binding(
                     get: { state.commandPowerManager.isHeartbeatEnabled },
                     set: { enabled in
@@ -59,6 +62,7 @@ struct josephApp: App {
                         explanation: "Essaie de maintenir la connexion sur l’interface choisie en envoyant un ping toutes les 15 secondes. Si une interface précise est choisie, joseph place temporairement son service réseau en première position et restaure l’ordre original à l’arrêt. Cela nécessite une autorisation administrateur et ne garantit pas qu’un hotspot reste actif."
                     )
                 }
+                .accessibilityIdentifier("toggle-heartbeat")
 
                 NetworkInterfacePicker(diagnostics: state.networkDiagnostics)
                 NetworkRouteView(routeManager: state.routeManager, diagnostics: state.networkDiagnostics)
@@ -71,13 +75,41 @@ struct josephApp: App {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("pmset : \(state.commandPowerManager.pmsetStatus)")
-                    Text("caffeinate : \(state.commandPowerManager.caffeinateStatus)")
-                    Text("heartbeat : \(state.commandPowerManager.heartbeatStatus)")
-                    Text("réseau : \(state.networkDiagnostics.pathStatus)")
+                LazyVGrid(columns: [
+                    GridItem(.flexible(), alignment: .leading),
+                    GridItem(.flexible(), alignment: .leading)
+                ], alignment: .leading, spacing: 4) {
+                    StatusBadge(
+                        title: "Mode Voyage",
+                        status: state.powerManager.isActive ? "Activé" : "Désactivé",
+                        level: state.powerManager.isActive ? .active : .neutral
+                    )
+                    StatusBadge(
+                        title: "pmset",
+                        status: state.commandPowerManager.pmsetStatus,
+                        level: StatusBadge.level(for: state.commandPowerManager.pmsetStatus)
+                    )
+                    StatusBadge(
+                        title: "caffeinate",
+                        status: state.commandPowerManager.caffeinateStatus,
+                        level: StatusBadge.level(for: state.commandPowerManager.caffeinateStatus)
+                    )
+                    StatusBadge(
+                        title: "heartbeat",
+                        status: state.commandPowerManager.heartbeatStatus,
+                        level: StatusBadge.level(for: state.commandPowerManager.heartbeatStatus)
+                    )
+                    StatusBadge(
+                        title: "route",
+                        status: state.routeManager.status,
+                        level: StatusBadge.level(for: state.routeManager.status)
+                    )
+                    StatusBadge(
+                        title: "réseau",
+                        status: state.networkDiagnostics.pathStatus,
+                        level: StatusBadge.level(for: state.networkDiagnostics.pathStatus)
+                    )
                 }
-                .font(.caption)
 
                 if let error = state.commandPowerManager.lastError ?? state.powerManager.lastError ?? state.supervisor.lastError {
                     Text(error)
@@ -119,6 +151,7 @@ struct josephApp: App {
             .padding(12)
         }, label: {
             JosephMenuBarIcon()
+                .accessibilityLabel("joseph")
         })
         .menuBarExtraStyle(.window)
 

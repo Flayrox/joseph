@@ -16,4 +16,25 @@ jobs:
       - name: Generate project
         run: xcodegen generate
       - name: Build and test
-        run: xcodebuild test -project JOSEPH.xcodeproj -scheme JOSEPH -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO
+        run: |
+          xcodebuild test \
+            -project joseph.xcodeproj \
+            -scheme joseph \
+            -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO
+
+  uitest:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Run UI tests
+        run: |
+          xcodebuild test \
+            -project joseph.xcodeproj \
+            -scheme joseph-ui \
+            -destination 'platform=macOS' \
+            -only-testing:josephUITests

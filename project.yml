@@ -55,6 +55,19 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: dev.joseph.menubar.tests
         GENERATE_INFOPLIST_FILE: true
 
+  josephUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: UITests
+    dependencies:
+      - target: joseph
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.joseph.menubar.uitests
+        GENERATE_INFOPLIST_FILE: true
+        ENABLE_HARDENED_RUNTIME: NO
+
 schemes:
   joseph:
     build:
@@ -67,3 +80,15 @@ schemes:
       config: Debug
       targets:
         - JOSEPHTests
+
+  joseph-ui:
+    build:
+      targets:
+        joseph: all
+        josephUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - josephUITests
