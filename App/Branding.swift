@@ -19,6 +19,9 @@ enum JosephBranding {
     static var menuBarImage: NSImage {
         let image = image(named: "logo_outline.png")
         image.isTemplate = true
+        // Status items size from the image's point size. A 512px source would
+        // stretch across the whole menu bar, so size it explicitly in points.
+        image.size = NSSize(width: 18, height: 18)
         return image
     }
 }
@@ -26,9 +29,7 @@ enum JosephBranding {
 struct JosephMenuBarIcon: View {
     var body: some View {
         Image(nsImage: JosephBranding.menuBarImage)
-            .resizable()
             .renderingMode(.template)
-            .aspectRatio(contentMode: .fit)
             .frame(width: 18, height: 18)
             .accessibilityLabel("joseph")
     }
