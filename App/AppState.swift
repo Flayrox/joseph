@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import SwiftUI
 
@@ -10,6 +11,8 @@ final class AppState: ObservableObject {
     let safetyController: PowerSafetyController
     let routeManager: NetworkRouteManager
     let startupManager: AppStartupManager
+
+    private var cancellables: Set<AnyCancellable> = []
 
     init(
         powerManager: PowerAssertionManager? = nil,
@@ -26,6 +29,25 @@ final class AppState: ObservableObject {
         let resolvedNetworkDiagnostics = networkDiagnostics ?? NetworkDiagnostics()
         self.networkDiagnostics = resolvedNetworkDiagnostics
         resolvedNetworkDiagnostics.start()
+
+        // The menu-bar view only observes AppState. Forward every child
+        // manager's change notifications so toggles and status lines update
+        // immediately when a mode is enabled or disabled.
+        forwardChanges(from: commandPowerManager)
+        forwardChanges(from: self.powerManager)
+        forwardChanges(from: self.supervisor)
+        forwardChanges(from: self.networkDiagnostics)
+        forwardChanges(from: safetyController)
+        forwardChanges(from: routeManager)
+        forwardChanges(from: startupManager)
+    }
+
+    private func forwardChanges<Manager: ObservableObject>(from manager: Manager) {
+        manager.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
     }
 
     func enableHeartbeat() {
